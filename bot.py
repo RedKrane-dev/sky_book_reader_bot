@@ -32,9 +32,7 @@ class BookReader:
             file = await f.read()
             if not is_normalized('NFC', file):
                 normal_file = normalize('NFC', file)
-                # await state.update_data(book=normal_file)
                 return normal_file
-            # await state.update_data(book=file)
             return file
 
     async def book_chosen(self, message: Message, state: FSMContext):
@@ -51,8 +49,6 @@ class BookReader:
         Функция чтения, срабатывает автоматически с командой /open, возвращает первую страницу
         """
         normalize_file = await self.file_normalize(message.text)
-        print(message.text)
-        print(type(message.text))
         user_data = await state.get_data()
         page = user_data['current_page']
         await message.answer(
@@ -72,18 +68,13 @@ class BookReader:
         await state.update_data(current_page=page + 1)
 
         user_data = await state.get_data()
-        # user_book = user_data['book']
         user_book_name = user_data['chosen_book']
-        print(user_book_name)
-        print(type(user_book_name))
         new_page = user_data['current_page']
         text = await self.file_normalize(user_book_name)
 
         start_pos = (new_page * self.page_size) - self.page_size
         stop_pos = new_page * self.page_size
         current_text = text[start_pos:stop_pos]
-        print(current_text)
-        print(type(current_text))
 
         if current_text:
             await message.answer(
@@ -166,5 +157,3 @@ class BookBot:
         """
         bot = Bot(token=self.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
         await self.dp.start_polling(bot)
-
-
